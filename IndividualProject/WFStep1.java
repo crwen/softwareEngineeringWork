@@ -114,11 +114,15 @@ public class WFStep1 {
 	
 	public static void words(String content) {
 		String strs[] = content.split(" ");
+		Set<String> set = new HashSet<>();
 		for (int i = 0; i < strs.length; ++i) {
 			if (strs[i].matches("[A-z]+[A-z0-9]")) {
-				System.out.println(strs[i]);
-				
+				set.add(strs[i]);
 			}
+		}
+		Iterator<String> it = set.iterator();
+		while(it.hasNext()) {
+			System.out.println(it.next());
 		}
 	}
 
