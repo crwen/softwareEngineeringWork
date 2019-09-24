@@ -1,14 +1,12 @@
-import java.io.File;
+﻿
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 
 class Alph implements Comparable<Alph> {
@@ -114,7 +112,7 @@ public class WFStep1 {
 	
 	public static void words(String content) {
 		String strs[] = content.split(" ");
-		Set<String> set = new HashSet<>();
+		Set<String> set = new HashSet<String>();
 		for (int i = 0; i < strs.length; ++i) {
 			if (strs[i].matches("[A-z]+[A-z0-9]")) {
 				set.add(strs[i]);
