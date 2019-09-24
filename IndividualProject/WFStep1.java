@@ -1,4 +1,4 @@
-﻿
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,31 +9,31 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-class Alph implements Comparable<Alph> {
-	private Character ch;		//字母
-	private Integer cnt;	//频数
-	
-	public Alph(char ch) {this.ch = ch; this.cnt = 0;}
-	
-	public void setCnt(int cnt) { this.cnt = cnt; }
-	
-	public void setCh(char ch) { this.ch = ch; }
-	
-	public int getCnt() {return this.cnt; }
-	
-	public char getCh() {return this.ch; }
-
-
-	@Override
-	public int compareTo(Alph o) {
-		if (o.cnt != this.cnt) {
-			return o.cnt.compareTo(this.cnt);
-		} else {
-			return this.ch.compareTo(o.ch);
-		}
-	}
-
-}
+//class Alph implements Comparable<Alph> {
+//	private Character ch;		//字母
+//	private Integer cnt;	//频数
+//	
+//	public Alph(char ch) {this.ch = ch; this.cnt = 0;}
+//	
+//	public void setCnt(int cnt) { this.cnt = cnt; }
+//	
+//	public void setCh(char ch) { this.ch = ch; }
+//	
+//	public int getCnt() {return this.cnt; }
+//	
+//	public char getCh() {return this.ch; }
+//
+//
+//	@Override
+//	public int compareTo(Alph o) {
+//		if (o.cnt != this.cnt) {
+//			return o.cnt.compareTo(this.cnt);
+//		} else {
+//			return this.ch.compareTo(o.ch);
+//		}
+//	}
+//
+//}
 
 public class WFStep1 {
 
