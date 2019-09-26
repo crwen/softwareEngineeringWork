@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 
 /**
  * 文件读写的工具类
@@ -72,6 +75,22 @@ public class Read {
 		}
 		
 		return fileList;
+	}
+	
+	/**
+	 * 从停用表（stopwords.txt）中获取停用词，并返回
+	 * @throws IOException 
+	 */
+	public static Set<String> getStopWords(String stop) throws IOException {
+		String content = readFile(stop);
+		String[] words = content.split("[^A-z0-9]");
+		
+		Set<String> set = new HashSet<>();
+		for (String s : words ) {
+			set.add(s);
+		}
+		
+		return set;
 	}
 
 }
