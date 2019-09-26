@@ -44,7 +44,7 @@ public class Read {
 		
 		for (int i = 0; i < files.length; ++i) {
 			if (files[i].isDirectory()) {
-				readDirection(files[i].getAbsolutePath());
+				continue;
 			} else {
 				fileList.add( readFile(files[i].getAbsolutePath()) );
 //				System.out.println(files[i]);
@@ -53,11 +53,25 @@ public class Read {
 		}
 		System.out.println();
 		
-		
-		
 		return fileList;
 	}
 	
-	
+	public static List<String> readDirectionRec(String path) throws IOException {
+		
+		File file = new File(path);
+		File[] files = file.listFiles();
+		
+		for (int i = 0; i < files.length; ++i) {
+			if (files[i].isDirectory()) {
+				readDirection(files[i].getAbsolutePath());
+			} else {
+				fileList.add( readFile(files[i].getAbsolutePath()) );
+//				System.out.println(files[i]);
+			}
+			
+		}
+		
+		return fileList;
+	}
 
 }
