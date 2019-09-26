@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import utils.Path;
 import utils.Read;
 
 /**
@@ -24,7 +25,7 @@ public class WF {
 	
 	public static void main(String[] args) throws IOException {
 		//获取文件路径
-		String path = getPath(args, 1);
+		String path = Path.getPath(args, 1);
 		if (args.length > 1) {
 			String op = args[0];
 			String content = "";
@@ -43,7 +44,7 @@ public class WF {
 			case "-d":
 				List<String> contents = null;
 				if (args[1].equals("-s")) {
-					path = getPath(args, 2);
+					path = Path.getPath(args, 2);
 					contents = Read.readDirectionRec(path);
 				} else {
 					contents = Read.readDirection(path);
@@ -54,7 +55,7 @@ public class WF {
 				}
 				break;
 			case "-n":
-				path = getPath(args, 2);
+				path = Path.getPath(args, 2);
 				content = Read.readFile(path);
 				words(content, Integer.parseInt(args[1]));
 				break;
@@ -66,19 +67,7 @@ public class WF {
 		}
 	}
 
-	/**
-	 * 获取文件路径
-	 * @param args
-	 * @return
-	 */
-	private static String getPath(String[] args, int begin) {
-		String path = "";
-		for (int i = begin; i < args.length; ++i) {
-			path += args[i] + " ";
-		}
-		
-		return path.trim();
-	}
+
 	
 	
 	/**
