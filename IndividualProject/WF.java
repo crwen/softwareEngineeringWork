@@ -24,7 +24,7 @@ public class WF {
 	
 	public static void main(String[] args) throws IOException {
 		//获取文件路径
-		String path = getPath(args);
+		String path = getPath(args, 1);
 		if (args.length > 1) {
 			String op = args[0];
 			if (op.equals("-c")) {
@@ -37,11 +37,17 @@ public class WF {
 				String content = Read.readFile(path);
 				words(content);
 			} else if (op.equals("-d")) {
-				List<String> contents = Read.readDirection(path);
-
-				for (String content : contents) {
-					words(content);
+				List<String> contents = null;
+				if (args[1].equals("-s")) {
+					path = getPath(args, 2);
+					contents = Read.readDirectionRec(path);
+				} else {
+					contents = Read.readDirection(path);
 				}
+				System.out.println(contents.size());
+//				for (String content : contents) {
+//					words(content);
+//				}
 			}
 		}
 	}
@@ -51,9 +57,9 @@ public class WF {
 	 * @param args
 	 * @return
 	 */
-	private static String getPath(String[] args) {
+	private static String getPath(String[] args, int begin) {
 		String path = "";
-		for (int i = 1; i < args.length; ++i) {
+		for (int i = begin; i < args.length; ++i) {
 			path += args[i] + " ";
 		}
 		
