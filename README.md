@@ -7,5 +7,7 @@ this is my software engineering homework
     - function 1
 	- function 2
 		function 2.1
+		
 		function 2.2
+	- function 3
 	
