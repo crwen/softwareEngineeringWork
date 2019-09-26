@@ -1,15 +1,13 @@
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+import utils.Read;
 
 /**
  * 字母类
@@ -25,21 +23,25 @@ public class WF {
 	private static int num;	
 	
 	public static void main(String[] args) throws IOException {
-
+		//获取文件路径
+		String path = getPath(args);
 		if (args.length > 1) {
 			String op = args[0];
 			if (op.equals("-c")) {
-				//获取文件路径
-				String path = getPath(args);
+				
 				//获取文件内容
-				String content = read(path);
+//				String content = read(path);
+				String content = Read.readFile(path);
 				convert(content.toLowerCase());
 			} else if (op.equals("-f")) {
-				//获取文件路径
-				String path = getPath(args);
-				//获取文件内容
-				String content = read(path);
+				String content = Read.readFile(path);
 				words(content);
+			} else if (op.equals("-d")) {
+				List<String> contents = Read.readDirection(path);
+
+				for (String content : contents) {
+					words(content);
+				}
 			}
 		}
 	}
@@ -55,30 +57,9 @@ public class WF {
 			path += args[i] + " ";
 		}
 		
-		return path;
+		return path.trim();
 	}
 	
-	/**
-	 * 读取文件
-	 * @return
-	 * @throws IOException
-	 */
-	private static String read(String path) throws IOException  {
-
-		FileInputStream fip = new FileInputStream(path);
-		InputStreamReader reader = new InputStreamReader(fip, "gbk");
-		StringBuffer sb = new StringBuffer();
-		while (reader.ready()) {
-			sb.append((char) reader.read());
-		}
-//	    System.out.println(sb.toString());
-		reader.close();
-		fip.close();
-		
-		//返回文件内容
-		return sb.toString();
-	}
-
 	
 	/**
 	 * 记录文件内容中各字母和出现的次数
@@ -110,12 +91,19 @@ public class WF {
 		
 	}
 	
-	
+	/**
+	 * 记录文件内容中各单词出现的次数和频次
+	 * @param content
+	 */
 	public static void words(String content) {
+		
 		DecimalFormat df = new DecimalFormat("######0.00%"); 
 		String strs[] = content.split(" ");
 		Set<Alph> set = new HashSet<Alph>();
 		Map<String, Integer> map = new HashMap<String, Integer>();
+		
+		num = 0;
+		
 		for (int i = 0; i < strs.length; ++i) {
 			if (strs[i].matches("[A-z]+[A-z0-9]")) {
 				num++;
@@ -129,7 +117,6 @@ public class WF {
 		
 		for (Map.Entry<String, Integer> entry : map.entrySet()) {
 			set.add(new Alph(entry.getKey(), entry.getValue()));
-//			System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 		}
 
 		Alph[] arr =  new Alph[set.size()];
