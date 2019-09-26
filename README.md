@@ -6,7 +6,8 @@ this is my software engineering homework
 - step 1
     - function 1
 	- function 2
-		- function 2.1
-		- function 2.2
+		function 2.1
+		
+		function 2.2
 	- function 3
 	
