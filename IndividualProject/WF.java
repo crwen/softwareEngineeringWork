@@ -27,16 +27,20 @@ public class WF {
 		String path = getPath(args, 1);
 		if (args.length > 1) {
 			String op = args[0];
-			if (op.equals("-c")) {
-				
+			String content = "";
+			
+			switch (op) {
+			case "-c":
 				//获取文件内容
 //				String content = read(path);
-				String content = Read.readFile(path);
+				content = Read.readFile(path);
 				convert(content.toLowerCase());
-			} else if (op.equals("-f")) {
-				String content = Read.readFile(path);
+				break;
+			case "-f":
+				content = Read.readFile(path);
 				words(content);
-			} else if (op.equals("-d")) {
+				break;
+			case "-d":
 				List<String> contents = null;
 				if (args[1].equals("-s")) {
 					path = getPath(args, 2);
@@ -44,11 +48,21 @@ public class WF {
 				} else {
 					contents = Read.readDirection(path);
 				}
-				System.out.println(contents.size());
-//				for (String content : contents) {
-//					words(content);
-//				}
+
+				for (String c : contents) {
+					words(c);
+				}
+				break;
+			case "-n":
+				path = getPath(args, 2);
+				content = Read.readFile(path);
+				words(content, Integer.parseInt(args[1]));
+				break;
+
+			default:
+				break;
 			}
+			
 		}
 	}
 
@@ -104,6 +118,34 @@ public class WF {
 	public static void words(String content) {
 		
 		DecimalFormat df = new DecimalFormat("######0.00%"); 
+		Alph[] arr = findWords(content);
+		
+		System.out.println("单词   \t\t   频率");
+		for (int i = 0; i < arr.length; ++i) {
+			System.out.println(arr[i].getWord() + "\t\t" +  df.format((double)arr[i].getCnt() / num));
+			
+		}
+	}
+	
+	public static void words(String content, int n) {
+		
+		DecimalFormat df = new DecimalFormat("######0.00%"); 
+		Alph[] arr = findWords(content);
+		
+		System.out.println("单词   \t\t   频率");
+		for (int i = 0; i < n; ++i) {
+			if (i >= arr.length)	break;
+			System.out.println(arr[i].getWord() + "\t\t" +  df.format((double)arr[i].getCnt() / num));
+			
+		}
+	}
+
+	/**
+	 * 找出不重复的单词与频次，并返回
+	 * @param content
+	 * @return
+	 */
+	private static Alph[] findWords(String content) {
 		String strs[] = content.split(" ");
 		Set<Alph> set = new HashSet<Alph>();
 		Map<String, Integer> map = new HashMap<String, Integer>();
@@ -128,12 +170,7 @@ public class WF {
 		Alph[] arr =  new Alph[set.size()];
 		set.toArray(arr);
 		Arrays.sort(arr);
-		
-		System.out.println("单词   \t\t   频率");
-		for (int i = 0; i < arr.length; ++i) {
-			System.out.println(arr[i].getWord() + "\t\t" +  df.format((double)arr[i].getCnt() / num));
-			
-		}
+		return arr;
 	}
 
 
