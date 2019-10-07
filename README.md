@@ -9,4 +9,7 @@ this is my software engineering homework
 		- function 2.1
 		- function 2.2
 	- function 3
-	
+- step2
+
+- step3
+	function 5
