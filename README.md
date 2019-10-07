@@ -10,6 +10,6 @@ this is my software engineering homework
 		- function 2.2
 	- function 3
 - step2
-
+	- function 4
 - step3
-	function 5
+	- function 5
