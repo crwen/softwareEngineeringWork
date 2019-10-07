@@ -60,7 +60,11 @@ public class WF {
 				break;
 			case "-x":
 				String option = args[1];
-				
+				path = Path.getPath(args, 3);
+				content = Read.readFile(path);
+				System.out.println(Path.getPath(args, 1, 2));
+				Set<String> stop = Read.getStopWords(Path.getPath(args, 1, 2));
+				wordsStop(content, stop);
 				break;
 			case "-p":
 				int number = Integer.parseInt(args[1]);
@@ -125,6 +129,18 @@ public class WF {
 		}
 	}
 	
+	public static void wordsStop(String content, Set<String> stop) {
+		
+		DecimalFormat df = new DecimalFormat("######0.00%"); 
+		Alph[] arr = findWords(content);
+		
+		System.out.println("单词   \t\t   频率");
+		for (int i = 0; i < arr.length; ++i) {
+			if (!stop.contains(arr[i].getWord()))
+				System.out.println(arr[i].getWord() + "\t\t" +  df.format((double)arr[i].getCnt() / num));
+		}
+	}
+	
 	
 	public static void words(String content, int n) {
 		
@@ -177,10 +193,10 @@ public class WF {
 		Alph[] arr = findPhrase(content);
 //		System.out.println(arr.length);
 		for (int i = 0; i < arr.length; i++) {
-//			if (arr[i].getNum() == number) {
+			if (arr[i].getNum() == number) {
 				System.out.println(arr[i].getPhrase() + "\t" + 
 						arr[i].getPhrase().split(" ").length + "\t" + arr[i].getCnt());
-//			}
+			}
 		}
 		
 	}
