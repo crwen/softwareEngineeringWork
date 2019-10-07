@@ -14,4 +14,14 @@ public class Path {
 		
 		return path.trim();
 	}
+	
+	public static String getPath(String[] args, int begin, int end) {
+		String path = "";
+		for (int i = begin; i < end; ++i) {
+			path += args[i] + " ";
+		}
+		
+		return path.trim();
+	}
+	
 }
