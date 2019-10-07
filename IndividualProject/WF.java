@@ -33,7 +33,6 @@ public class WF {
 			switch (op) {
 			case "-c":
 				//获取文件内容
-//				String content = read(path);
 				content = Read.readFile(path);
 				convert(content.toLowerCase());
 				break;
@@ -59,16 +58,26 @@ public class WF {
 				content = Read.readFile(path);
 				words(content, Integer.parseInt(args[1]));
 				break;
-
+			case "-x":
+				String option = args[1];
+				
+				break;
+			case "-p":
+				int number = Integer.parseInt(args[1]);
+				path = Path.getPath(args, 2);
+				content = Read.readFile(path);
+				phrase(content, number);
+//				findPhrase(content);
+				break;
 			default:
 				break;
 			}
 			
 		}
+		
+//		Integer.parseInt("");
 	}
 
-
-	
 	
 	/**
 	 * 记录文件内容中各字母和出现的次数
@@ -116,6 +125,7 @@ public class WF {
 		}
 	}
 	
+	
 	public static void words(String content, int n) {
 		
 		DecimalFormat df = new DecimalFormat("######0.00%"); 
@@ -142,7 +152,7 @@ public class WF {
 		num = 0;
 		
 		for (int i = 0; i < strs.length; ++i) {
-			if (strs[i].matches("[A-z]+[A-z0-9]")) {
+			if (strs[i].matches("[A-z]+[A-z0-9]*")) {
 				num++;
 				if (map.get(strs[i]) == null) {
 					map.put(strs[i], 1);
@@ -159,6 +169,49 @@ public class WF {
 		Alph[] arr =  new Alph[set.size()];
 		set.toArray(arr);
 		Arrays.sort(arr);
+		return arr;
+	}
+	
+	
+	public static void phrase(String content, int number) {
+		Alph[] arr = findPhrase(content);
+//		System.out.println(arr.length);
+		for (int i = 0; i < arr.length; i++) {
+//			if (arr[i].getNum() == number) {
+				System.out.println(arr[i].getPhrase() + "\t" + 
+						arr[i].getPhrase().split(" ").length + "\t" + arr[i].getCnt());
+//			}
+		}
+		
+	}
+	
+	public static Alph[]  findPhrase(String content) {
+		String strs[] = content.split("[^A-z ']+");
+		Set<Alph> set = new HashSet<Alph>();
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		
+		num = 0;
+		
+		for (int i = 0; i < strs.length; ++i) {
+			int cnt = strs[i].trim().split(" ").length;
+			if (cnt > 1) {
+				num++;
+				if (map.get(strs[i].trim()) == null) {
+					map.put(strs[i].trim(), 1);
+				} else {
+					map.put(strs[i].trim(), map.get(strs[i].trim()) + 1);
+				}
+			}
+		}	
+		
+		for (Map.Entry<String, Integer> entry : map.entrySet()) {
+			set.add(new Alph(entry.getKey(), entry.getKey().trim().split(" ").length ,entry.getValue()));
+		}
+		
+		Alph[] arr =  new Alph[set.size()];
+		set.toArray(arr);
+		Arrays.sort(arr);
+		
 		return arr;
 	}
 
