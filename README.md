@@ -5,7 +5,7 @@ this is my software engineering homework
 
 ##### 2 编程基本功
 - 1 hello world(base)
-- 2 
+- 2 最大子数组（Basic training）
 - 3 求1-20000内的素数（Basic training）
 - 4 GUI HelloWorld（Basic training）
 
