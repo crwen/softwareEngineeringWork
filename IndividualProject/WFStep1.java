@@ -1,72 +1,71 @@
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
+/**
+ * 字母类
+ * @author crwen
+ *
+ */
 
 
-class Alph implements Comparable<Alph> {
-	private Character ch;		//字母
-	private Integer cnt;	//频数
-	
-	public Alph(char ch) {this.ch = ch; this.cnt = 0;}
-	
-	public void setCnt(int cnt) { this.cnt = cnt; }
-	
-	public void setCh(char ch) { this.ch = ch; }
-	
-	public int getCnt() {return this.cnt; }
-	
-	public char getCh() {return this.ch; }
-
-
-	@Override
-	public int compareTo(Alph o) {
-		if (o.cnt != this.cnt) {
-			return o.cnt.compareTo(this.cnt);
-		} else {
-			return this.ch.compareTo(o.ch);
-		}
-	}
-
-}
-
-public class WFStep1 {
+public class WF {
 
 	private final static String STR = "abcdefghijklmnopqrstuvwxyz";
 
-	private final static String PATH = "D:\\a.txt";	
-	
 	private static int num;	
 	
 	public static void main(String[] args) throws IOException {
 
-		
-
-		//获取文件内容并转化为小写
-		String content = read();
-		
-//		convert(content.toLowerCase());
-
-		
-		words(content);
-
+		if (args.length > 1) {
+			String op = args[0];
+			if (op.equals("-c")) {
+				//获取文件路径
+				String path = getPath(args);
+				//获取文件内容
+				String content = read(path);
+				convert(content.toLowerCase());
+			} else if (op.equals("-f")) {
+				//获取文件路径
+				String path = getPath(args);
+				//获取文件内容
+				String content = read(path);
+				words(content);
+			}
+		}
 	}
 
+	/**
+	 * 获取文件路径
+	 * @param args
+	 * @return
+	 */
+	private static String getPath(String[] args) {
+		String path = "";
+		for (int i = 1; i < args.length; ++i) {
+			path += args[i] + " ";
+		}
+		
+		return path;
+	}
+	
 	/**
 	 * 读取文件
 	 * @return
 	 * @throws IOException
 	 */
-	private static String read() throws IOException  {
+	private static String read(String path) throws IOException  {
 
-		FileInputStream fip = new FileInputStream(PATH);
+		FileInputStream fip = new FileInputStream(path);
 		InputStreamReader reader = new InputStreamReader(fip, "gbk");
 		StringBuffer sb = new StringBuffer();
 		while (reader.ready()) {
@@ -113,13 +112,37 @@ public class WFStep1 {
 	
 	
 	public static void words(String content) {
+		DecimalFormat df = new DecimalFormat("######0.00%"); 
 		String strs[] = content.split(" ");
+		Set<Alph> set = new HashSet<Alph>();
+		Map<String, Integer> map = new HashMap<String, Integer>();
 		for (int i = 0; i < strs.length; ++i) {
 			if (strs[i].matches("[A-z]+[A-z0-9]")) {
-				System.out.println(strs[i]);
-				
+				num++;
+				if (map.get(strs[i]) == null) {
+					map.put(strs[i], 1);
+				} else {
+					map.put(strs[i], map.get(strs[i]) + 1);
+				}
 			}
 		}
+		
+		for (Map.Entry<String, Integer> entry : map.entrySet()) {
+			set.add(new Alph(entry.getKey(), entry.getValue()));
+//			System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+		}
+
+		Alph[] arr =  new Alph[set.size()];
+		set.toArray(arr);
+		Arrays.sort(arr);
+		
+		System.out.println("单词   \t\t   频率");
+		for (int i = 0; i < arr.length; ++i) {
+			System.out.println(arr[i].getWord() + "\t\t" +  df.format((double)arr[i].getCnt() / num));
+			
+		}
 	}
+
+
 
 }

@@ -1,92 +1,85 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import utils.Path;
+import utils.Read;
 
 /**
  * 字母类
  * @author crwen
  *
  */
-class Alph implements Comparable<Alph> {
-	private Character ch;		//字母
-	private Integer cnt;	//频数
-	
-	public Alph(char ch) {this.ch = ch; this.cnt = 0;}
-	
-	public void setCnt(int cnt) { this.cnt = cnt; }
-	
-	public void setCh(char ch) { this.ch = ch; }
-	
-	public int getCnt() {return this.cnt; }
-	
-	public char getCh() {return this.ch; }
 
-	/**
-	 * 重写compare方法，使之按照频率从大到小排列
-	 * 如果频数一样，就按字典序排列
-	 */
-	@Override
-	public int compareTo(Alph o) {
-		if (o.cnt != this.cnt) {
-			return o.cnt.compareTo(this.cnt);
-		} else {
-			return this.ch.compareTo(o.ch);
-		}
-	}
-
-}
 
 public class WF {
 
 	private final static String STR = "abcdefghijklmnopqrstuvwxyz";
 
-	private final static String PATH = "D:\\a.txt";	//文件路径
-	
-	private static int num;	//记录字母的总个数
+	private static int num;	
 	
 	public static void main(String[] args) throws IOException {
+		//获取文件路径
+		String path = Path.getPath(args, 1);
+		if (args.length > 1) {
+			String op = args[0];
+			String content = "";
+			
+			switch (op) {
+			case "-c":
+				//获取文件内容
+				content = Read.readFile(path);
+				convert(content.toLowerCase());
+				break;
+			case "-f":
+				content = Read.readFile(path);
+				words(content);
+				break;
+			case "-d":
+				List<String> contents = null;
+				if (args[1].equals("-s")) {
+					path = Path.getPath(args, 2);
+					contents = Read.readDirectionRec(path);
+				} else {
+					contents = Read.readDirection(path);
+				}
 
-		DecimalFormat df = new DecimalFormat("######0.00%"); // 格式化
-
-		//获取文件内容并转化为小写
-		String content = read().toLowerCase();
-		
-		Alph[] arr = convert(content);
-		
-		System.out.println("字母\t出现次数\t频率");
-		for (int i = 0; i < STR.length(); ++i) {
-			System.out.println(arr[i].getCh() + "\t" + arr[i].getCnt() + "\t" + df.format((double)arr[i].getCnt() / num));
+				for (String c : contents) {
+					words(c);
+				}
+				break;
+			case "-n":
+				path = Path.getPath(args, 2);
+				content = Read.readFile(path);
+				words(content, Integer.parseInt(args[1]));
+				break;
+			case "-x":
+				String option = args[1];
+				path = Path.getPath(args, 3);
+				content = Read.readFile(path);
+				System.out.println(Path.getPath(args, 1, 2));
+				Set<String> stop = Read.getStopWords(Path.getPath(args, 1, 2));
+				wordsStop(content, stop);
+				break;
+			case "-p":
+				int number = Integer.parseInt(args[1]);
+				path = Path.getPath(args, 2);
+				content = Read.readFile(path);
+				phrase(content, number);
+//				findPhrase(content);
+				break;
+			default:
+				break;
+			}
+			
 		}
-
-	}
-
-	/**
-	 * 读取文件
-	 * @return
-	 * @throws IOException
-	 */
-	private static String read() throws IOException  {
-
-		FileInputStream fip = new FileInputStream(PATH);
-		InputStreamReader reader = new InputStreamReader(fip, "utf-8");
-		StringBuffer sb = new StringBuffer();
-		while (reader.ready()) {
-			sb.append((char) reader.read());
-		}
-//	    System.out.println(sb.toString());
-		reader.close();
-		fip.close();
 		
-		//返回文件内容
-		return sb.toString();
+//		Integer.parseInt("");
 	}
 
 	
@@ -95,7 +88,8 @@ public class WF {
 	 * @param content
 	 * @return
 	 */
-	private static Alph[] convert(String content) {
+	private static void convert(String content) {
+		DecimalFormat df = new DecimalFormat("######0.00%"); 
 		Alph[] arr = new Alph[26];
 		for (int i = 0; i < STR.length(); ++i) {
 			arr[i] = new Alph(STR.charAt(i));
@@ -109,10 +103,134 @@ public class WF {
 			}
 		}
 		
-		//对字母数组按照频率从大到小排序
+	
+		Arrays.sort(arr);
+		
+		System.out.println("字母\t出现次数\t频率");
+		for (int i = 0; i < STR.length(); ++i) {
+			System.out.println(arr[i].getCh() + "\t" + arr[i].getCnt() + "\t" + df.format((double)arr[i].getCnt() / num));
+		}
+		
+	}
+	
+	/**
+	 * 记录文件内容中各单词出现的次数和频次
+	 * @param content
+	 */
+	public static void words(String content) {
+		
+		DecimalFormat df = new DecimalFormat("######0.00%"); 
+		Alph[] arr = findWords(content);
+		
+		System.out.println("单词   \t\t   频率");
+		for (int i = 0; i < arr.length; ++i) {
+			System.out.println(arr[i].getWord() + "\t\t" +  df.format((double)arr[i].getCnt() / num));
+			
+		}
+	}
+	
+	public static void wordsStop(String content, Set<String> stop) {
+		
+		DecimalFormat df = new DecimalFormat("######0.00%"); 
+		Alph[] arr = findWords(content);
+		
+		System.out.println("单词   \t\t   频率");
+		for (int i = 0; i < arr.length; ++i) {
+			if (!stop.contains(arr[i].getWord()))
+				System.out.println(arr[i].getWord() + "\t\t" +  df.format((double)arr[i].getCnt() / num));
+		}
+	}
+	
+	
+	public static void words(String content, int n) {
+		
+		DecimalFormat df = new DecimalFormat("######0.00%"); 
+		Alph[] arr = findWords(content);
+		
+		System.out.println("单词   \t\t   频率");
+		for (int i = 0; i < n; ++i) {
+			if (i >= arr.length)	break;
+			System.out.println(arr[i].getWord() + "\t\t" +  df.format((double)arr[i].getCnt() / num));
+			
+		}
+	}
+
+	/**
+	 * 找出不重复的单词与频次，并返回
+	 * @param content
+	 * @return
+	 */
+	private static Alph[] findWords(String content) {
+		String strs[] = content.split(" ");
+		Set<Alph> set = new HashSet<Alph>();
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		
+		num = 0;
+		
+		for (int i = 0; i < strs.length; ++i) {
+			if (strs[i].matches("[A-z]+[A-z0-9]*")) {
+				num++;
+				if (map.get(strs[i]) == null) {
+					map.put(strs[i], 1);
+				} else {
+					map.put(strs[i], map.get(strs[i]) + 1);
+				}
+			}
+		}
+		
+		for (Map.Entry<String, Integer> entry : map.entrySet()) {
+			set.add(new Alph(entry.getKey(), entry.getValue()));
+		}
+
+		Alph[] arr =  new Alph[set.size()];
+		set.toArray(arr);
 		Arrays.sort(arr);
 		return arr;
 	}
+	
+	
+	public static void phrase(String content, int number) {
+		Alph[] arr = findPhrase(content);
+//		System.out.println(arr.length);
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i].getNum() == number) {
+				System.out.println(arr[i].getPhrase() + "\t" + 
+						arr[i].getPhrase().split(" ").length + "\t" + arr[i].getCnt());
+			}
+		}
+		
+	}
+	
+	public static Alph[]  findPhrase(String content) {
+		String strs[] = content.split("[^A-z ']+");
+		Set<Alph> set = new HashSet<Alph>();
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		
+		num = 0;
+		
+		for (int i = 0; i < strs.length; ++i) {
+			int cnt = strs[i].trim().split(" ").length;
+			if (cnt > 1) {
+				num++;
+				if (map.get(strs[i].trim()) == null) {
+					map.put(strs[i].trim(), 1);
+				} else {
+					map.put(strs[i].trim(), map.get(strs[i].trim()) + 1);
+				}
+			}
+		}	
+		
+		for (Map.Entry<String, Integer> entry : map.entrySet()) {
+			set.add(new Alph(entry.getKey(), entry.getKey().trim().split(" ").length ,entry.getValue()));
+		}
+		
+		Alph[] arr =  new Alph[set.size()];
+		set.toArray(arr);
+		Arrays.sort(arr);
+		
+		return arr;
+	}
+
 
 
 }
